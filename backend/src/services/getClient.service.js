@@ -2,7 +2,7 @@ import { postgresDB } from "../databases/postgres.database"
 import { vanillaDB } from "../databases/vanilla.database"
 
 const getClientService = async data => {
-    const { uuid } = data
+    const { client_uuid } = data
     let client
 
     // Postgres Database Connection
@@ -15,10 +15,10 @@ const getClientService = async data => {
                     clients
                 WHERE
                     id = $1;`,
-                [uuid]
+                [client_uuid]
             )
             if(!result.rowCount){
-                throw new Error("Entry not found")
+                throw new Error("Client not found")
             }
             client = result.rows[0]
         } catch (error) {
@@ -28,9 +28,9 @@ const getClientService = async data => {
 
     // Javascript Vanilla Database Connection
     if (process.env.NODE_ENV === "dev-js") {
-        client = vanillaDB.clients.find(entry => entry.id === uuid)
+        client = vanillaDB.clients.find(entry => entry.id === client_uuid)
         if(client === undefined){
-            throw new Error("Entry not found")
+            throw new Error("Client not found")
         }
     }
     
@@ -40,6 +40,7 @@ const getClientService = async data => {
         emails: client.emails,
         phones: client.phones,
         created_at: client.created_at
-    }}
+    }
+}
 
 export default getClientService

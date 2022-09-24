@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === "dev-postgres") {
 // - - - - - - - - - -
 
 const environment = process.env.NODE_ENV
-const port = environment === "dev-js"? 3000 : 3001
+const port = process.env.NODE_PORT
 
 app.listen(port, () => {
     console.log(`Running on ${port}; environment ${environment}`)

@@ -1,13 +1,13 @@
 import { postgresDB } from "../databases/postgres.database"
 import { vanillaDB } from "../databases/vanilla.database"
 
-const deleteClientService = async data => {
+const listContactsService = async data => {
     const { client_uuid } = data
 
     // Postgres Database Connection
     if (process.env.NODE_ENV === "dev-postgres") {
         try {
-            const check = await postgresDB.query(
+            const result_client = await postgresDB.query(
                 `SELECT
                     *
                 FROM
@@ -16,17 +16,26 @@ const deleteClientService = async data => {
                     id = $1;`,
                 [client_uuid]
             )
-            if(!check.rowCount){
+            if(!result_client.rowCount){
                 throw new Error("Client not found")
             }
             const result = await postgresDB.query(
-                `DELETE FROM
-                    clients
+                `SELECT
+                    *
+                FROM
+                    contacts
                 WHERE
-                    id = $1;`,
+                    client = $1;`,
                 [client_uuid]
             )
-            return true
+            const contacts = result.rows.map(contact => contact = {
+                id: contact.id,
+                name: contact.name,
+                emails: contact.emails.length > 0 ? contact.emails.split(";") : [],
+                phones: contact.phones.length > 0 ? contact.phones.split(";") : [],
+                client: contact.client
+            })
+            return contacts
         } catch (error) {
             throw new Error(error)
         }
@@ -34,21 +43,9 @@ const deleteClientService = async data => {
 
     // Javascript Vanilla Database Connection
     if (process.env.NODE_ENV === "dev-js") {
-        let index = -1
-        vanillaDB.clients.forEach((entry, i) => {
-            if (entry.id === client_uuid) {
-                index = i
-            }
-        })
-        if(index === -1){
-            throw new Error("Client not found")
-        }
-        vanillaDB.clients.splice(index, 1)
-        const filter = vanillaDB.contacts.filter((entry) => entry.client !== client_uuid)
-        vanillaDB.contacts = [ ...filter ]
-        return true
+       return vanillaDB.contacts.filter((entry) => entry.client === client_uuid)
     }
 
 }
 
-export default deleteClientService
+export default listContactsService

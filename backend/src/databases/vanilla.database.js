@@ -1,5 +1,6 @@
 export const vanillaDB = {
     users: [],
-    clients: []
+    clients: [],
+    contacts: []
 }
 

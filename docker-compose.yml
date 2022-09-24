@@ -2,36 +2,53 @@ version: '3.9'
 
 services:
 
-  api:
-    container_name: api
-    build: .
+  # front-end
+  web:
+    container_name: web
+    build: ./frontend/blueprint
     ports:
       - 3000:3000
     environment:
       - NODE_ENV=dev-js
-      - NODE_PORT=3000
+      - NODE_PORT=3001
+    command: [yarn, start]
+    volumes:
+      - .:/web
+
+  # back-end
+  api:
+    container_name: api
+    build: ./backend
+    ports:
+      - 3001:3001
+    environment:
+      - NODE_ENV=dev-js
+      - NODE_PORT=3001
+    entrypoint: [yarn, dev]
     volumes:
       - .:/app
 
   api_postgres:
     container_name: api_postgres
-    build: .
+    build: ./backend
     ports:
-      - 3001:3001
+      - 3002:3002
     environment:
       - NODE_ENV=dev-postgres
-      - NODE_PORT=3001
+      - NODE_PORT=3002
       - DB_HOST=postgres_db
       - DB_PORT=5432
       - DB_USER=docker
       - DB_PASSWORD=postgres
       - DB=postgres_db
+    entrypoint: [yarn, dev-postgres]
     depends_on:
       postgres_db:
         condition: service_healthy
     volumes:
       - .:/app_postgres      
 
+  # database
   postgres_db:
     container_name: postgres_db
     image: postgres:14.3

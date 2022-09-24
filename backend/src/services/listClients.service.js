@@ -12,7 +12,14 @@ const listClientsService = async data => {
                 FROM
                     clients;`,
             )
-            return result.rows
+            const clients = result.rows.map(client => client = {
+                id: client.id,
+                name: client.name,
+                emails: client.emails.length > 0 ? client.emails.split(";") : [],
+                phones: client.phones.length > 0 ? client.phones.split(";") : [],
+                created_at: client.created_at
+            })
+            return clients
         } catch (error) {
             throw new Error(error)
         }
