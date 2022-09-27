@@ -1,0 +1,73 @@
+version: '3.9'
+
+services:
+
+  # front-end
+  web:
+    container_name: web
+    build: ./frontend/blueprint
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_ENV=dev-js
+      - NODE_PORT=3001
+    command: [yarn, start]
+    volumes:
+      - .:/web
+
+  # back-end
+  api:
+    container_name: api
+    build: ./backend
+    ports:
+      - 3001:3001
+    environment:
+      - NODE_ENV=dev-js
+      - NODE_PORT=3001
+    entrypoint: [yarn, dev]
+    volumes:
+      - .:/app
+
+  api_postgres:
+    container_name: api_postgres
+    build: ./backend
+    ports:
+      - 3002:3002
+    environment:
+      - NODE_ENV=dev-postgres
+      - NODE_PORT=3002
+      - DB_HOST=postgres_db
+      - DB_PORT=5432
+      - DB_USER=docker
+      - DB_PASSWORD=postgres
+      - DB=postgres_db
+    entrypoint: [yarn, dev-postgres]
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+    volumes:
+      - .:/app_postgres      
+
+  # database
+  postgres_db:
+    container_name: postgres_db
+    image: postgres:14.3
+    ports:
+      - 5431:5432
+    environment:
+      - POSTGRES_DB=postgres_db
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    volumes:
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_postgres:/var/lib/postgresql/data
+
+volumes:
+  db_postgres:
+    driver: local
