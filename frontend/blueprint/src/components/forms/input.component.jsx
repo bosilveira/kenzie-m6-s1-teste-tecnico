@@ -1,10 +1,9 @@
 import styled from "styled-components";
 
-const Field = styled.div`
+const Base = styled.div`
     background: white;
-    width: 320px;
+    width: 300px;
     height: 48px;
-    padding: 8px 16px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -21,14 +20,16 @@ const Field = styled.div`
         border-bottom-style: double;
         border-color: #3bb3e0;
         background: white;
+        line-height: 24px;
         outline: none;
     }
 `
         
-export const Input = ({name, id, label, type, placeholder}) => {
-    return <Field>
-        <label for={name}>{label}</label>
-        <input type={type} name={name} id={id} placeholder={placeholder} required/>
-    </Field>
+export const Input = ({name, id, label, type, placeholder, value, onchange, required, disabled}) => {
+    return <Base>
+        <label htmlFor={name}>{label}</label>
+        <input type={type} name={name} id={id} placeholder={placeholder} value={value} autoComplete={"off"} 
+        onChange={onchange} required={required} disabled={disabled}/>
+    </Base>
 }
     

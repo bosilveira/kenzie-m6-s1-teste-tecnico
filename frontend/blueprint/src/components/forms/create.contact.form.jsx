@@ -1,8 +1,9 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import styled from "styled-components";
 import * as yup from "yup";
-import { createClientThunk } from '../../redux/thunks';
+import { createContactThunk } from '../../redux/thunks';
 import { Button } from "../button.component";
 import { Status } from "../status/status.component";
 import { Input } from "./input.component";
@@ -26,7 +27,10 @@ const Base = styled.div`
         align-items: center;
     }
 `
-export const CreateClient = () => {
+export const CreateContact = () => {
+
+    const { id } = useParams();
+
     const dispatch = useDispatch();
 
     const connection = useSelector((state) => state.database);
@@ -36,7 +40,8 @@ export const CreateClient = () => {
     const [ emails, setEmails ] = React.useState("");
     const [ phones, setPhones ] = React.useState("")
 
-    const clientSaveSchema = yup.object().shape({
+    const contactSaveSchema = yup.object().shape({
+        id: yup.string().required(),
         name: yup.string().required(),
         emails: yup.array()
             .required()
@@ -49,13 +54,13 @@ export const CreateClient = () => {
             .transform((value) => Array.from(new Set(value)))
             .of(yup.string()),
     })
-
+    
     const saveHandler = async () => {
         try {
-            const data = await clientSaveSchema.validate(
-                { name, emails: emails.split(","), phones: phones.split(",") }
+            const data = await contactSaveSchema.validate(
+                { id, name, emails: emails.split(","), phones: phones.split(",") }
             )
-            dispatch(createClientThunk(data.name, data.emails, data.phones))
+            dispatch(createContactThunk(data.id, data.name, data.emails, data.phones))
         } catch (error) {
             dispatch({
                 type: "@status",
@@ -72,7 +77,7 @@ export const CreateClient = () => {
         dispatch({
             type: "@status",
             payload: {
-                message: "Inform New Client Data",
+                message: "Inform New Contact Data",
                 icon: "idle",
                 log: Date.now()
             }

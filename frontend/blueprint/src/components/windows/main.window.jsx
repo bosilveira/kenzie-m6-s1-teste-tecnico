@@ -1,7 +1,6 @@
 import { FaDatabase, FaPrint, FaSearch, FaUsers } from "react-icons/fa";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { CreateClientPage } from "../pages/create.client.page";
-
 
 const Frame = styled.div`
     display: flex;
@@ -135,6 +134,10 @@ const Frame = styled.div`
                     top:1px;
                 }
             }
+            .disabled {
+                pointer-events: none;
+                opacity: .5;
+            }
         }
         .page {
             display: flex;
@@ -169,7 +172,10 @@ const Frame = styled.div`
     }
 `
 
-export const WindowApp = () => {
+export const MainWindow = ({ title, children }) => {
+
+    const connected = useSelector((state) => state.database.connected);
+
     return <>
     <Frame>
         <div className="header">
@@ -179,30 +185,32 @@ export const WindowApp = () => {
                 <div className="green"/>
             </div>
             <div className="title">
-                Cadastro de Clientes
+                { title || "Application: Client Database"}
             </div>
         </div>
         <div className="body">
             <div className="menu">
-                <div className="item">
+                <div className="item" onClick={()=>window.location.assign("/database")}>
                     <FaDatabase/>
                     Database
                 </div>
-                <div className="item">
+                
+                <div className={"item" + (connected ? "" : " disabled")} onClick={()=>window.location.assign("/clients")}>
                     <FaUsers/>
                     Clients
                 </div>
-                <div className="item">
+                <div className={"item disabled"} onClick={()=>window.location.assign("/search")}>
                     <FaSearch/>
                     Search
                 </div>
-                <div className="item">
+                <div className={"item disabled"} onClick={()=>window.location.assign("/report")}>
                     <FaPrint/>
                     Report
                 </div>
+
             </div>
             <div className="page">
-                <CreateClientPage/>
+                { children }
             </div>
         </div>
     </Frame>

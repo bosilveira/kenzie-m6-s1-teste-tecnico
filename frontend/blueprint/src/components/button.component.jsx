@@ -24,8 +24,8 @@ cursor: pointer;
 }
 `
 
-export const Button = () => {
+export const Button = ({action, children}) => {
     return <>
-    <Clickme>Iniciar</Clickme>
+    <Clickme onClick={action}>{children}</Clickme>
     </>
 }

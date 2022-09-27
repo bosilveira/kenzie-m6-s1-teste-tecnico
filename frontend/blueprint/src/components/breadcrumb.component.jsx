@@ -1,4 +1,3 @@
-import { FaChevronRight } from "react-icons/fa";
 import styled from "styled-components";
 
 const Base = styled.div`
@@ -9,15 +8,14 @@ const Base = styled.div`
     gap: 8px;
     height: 48px;
     width: 100%;
-    padding: 0;
+    padding: 0 8px;
     justify-content: center;
     text-decoration: none;
-    font-size: 16px;
+    font-size: 20px;
     text-transform: uppercase;
     color: #3bb3e0;
     svg {
         color: #3bb3e0;
-        
     }
     a {
         text-decoration: none;
@@ -25,16 +23,15 @@ const Base = styled.div`
         text-transform: uppercase;
         color: #3bb3e0;
     }
+    .spacer {
+        margin-left: auto;
+    }
 `
 
-export const Breadcrumb = ({icon1, root, icon2, current}) => {
+export const Breadcrumb = ({ children }) => {
     return <>
     <Base>
-        {icon1}
-        {root}
-        <FaChevronRight/>
-        {icon2}
-        {current}
+        { children }
     </Base>
     </>
 }

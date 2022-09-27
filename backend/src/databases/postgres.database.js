@@ -9,6 +9,5 @@ export const postgresDB = new Client({
     })
 
 export const startPostgres = async () => {
-    console.log("connection", process.env.DB_HOST, process.env.DB_PORT, process.env.DB_USER)
     await postgresDB.connect()
 }

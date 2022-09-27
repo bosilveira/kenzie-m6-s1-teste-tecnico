@@ -30,7 +30,7 @@ const Field = styled.div`
         
 export const TextArea = ({name, id, label, placeholder}) => {
     return <Field>
-        <label for={name}>{label}</label>
+        <label htmlFor={name}>{label}</label>
         <textarea name={name} id={id} placeholder={placeholder} ></textarea>
     </Field>
 }

@@ -1,6 +1,6 @@
 import { FaCircleNotch, FaRegCheckCircle, FaRegCircle, FaRegTimesCircle } from "react-icons/fa";
+import { useSelector } from "react-redux";
 import styled, { keyframes } from "styled-components";
-
 
 const spin = keyframes`
   from {
@@ -12,7 +12,7 @@ const spin = keyframes`
 `
 
 const Base = styled.div`
-        width: 300px;
+        width: 100%;
         height: 32px;
         padding: 8px;
         border-radius: 4px;
@@ -26,9 +26,12 @@ const Base = styled.div`
         font-size: 14px;
         text-transform: uppercase;
         gap: 4px;
+        transition: all .4s;
         svg {
             width: 24px;
             height: 24px;
+        }
+        &.fetching svg {
             animation: ${spin} 1s infinite;
         }
         span {
@@ -37,18 +40,18 @@ const Base = styled.div`
         }
 `
 
-export const Status = ({icon, label, status}) => {
+export const Status = () => {
+    const icon = useSelector((state) => state.status.icon);
+    const message = useSelector((state) => state.status.message);
+
     return <>
-    <Base>
-        {status === "idle" && <FaRegCircle/>}
-        {status === "fetching" && <FaCircleNotch/>}
-        {status === "ok" && <FaRegCheckCircle/>}
-        {status === "error" && <FaRegTimesCircle/>}
+    <Base className={icon}>
+        {icon === "idle" && <FaRegCircle/>}
+        {icon === "fetching" && <FaCircleNotch/>}
+        {icon === "ok" && <FaRegCheckCircle/>}
+        {icon === "error" && <FaRegTimesCircle/>}
         <span>
-        {status === "idle" && "Status: Idle"}
-        {status === "fetching" && "Status: Fetching"}
-        {status === "ok" && "Status: Connected"}
-        {status === "error" && "Status: Error"}
+        {message}
         </span>      
     </Base>
     </>
